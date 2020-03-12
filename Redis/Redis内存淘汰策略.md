@@ -1,4 +1,4 @@
-# Redis内存淘汰策略
+﻿# Redis内存淘汰策略
 我们可以在`redis.conf`配置文件中配置redis的最大内存以及内存淘汰策略对应的参数
 ```
 maxmemory 4GB
