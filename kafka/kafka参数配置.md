@@ -1,4 +1,4 @@
-1.broker端参数
+﻿1.broker端参数
 ```text
 # 可配置多个路径，可以将数据挂载到不同的物理磁盘上，提升吞吐量以及实现故障转移
 log.dirs=/home/kafka1,/home/kafka2,/home/kafka3  
