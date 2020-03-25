@@ -1,4 +1,4 @@
-#Redis持久化策略
+﻿#Redis持久化策略
 我们都知道Redis持久化可以分为`RDB`和`AOF`两种方式，下面我们来具体说说两种方式的优缺点。
 详情可参见官方文档[https://redis.io/topics/persistence]及配置文件说明[https://redis.io/topics/config]
 文件保存路径可通过配置：
