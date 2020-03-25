@@ -1,4 +1,6 @@
 ﻿# Redis内存淘汰策略
+详细配置文件可见[https://raw.githubusercontent.com/antirez/redis/4.0/redis.conf]
+
 我们可以在`redis.conf`配置文件中配置redis的最大内存以及内存淘汰策略对应的参数
 ```
 maxmemory 4GB
@@ -17,6 +19,7 @@ Redis内置了8种策略供我们选择，如下：
 第8种不淘汰，我在这里不多说，我们主要说前4种。  
 
 我们先来说说LRU和LFU
+>\# LFU算法是在Redis4.0版本开始提供
 + LRU (Least Recently Used) 即我们常说的最近最少使用，它主要是按照时间顺序来选择，哪个key最近一次访问离现在时间最远，就选择哪个key
 + LFU (Least Frequently Used) LFU除了关注时间，还会关注在这段时间内每个key使用的次数(即频率)，应该说算法更复杂，也会消耗更多的CPU资源
  
