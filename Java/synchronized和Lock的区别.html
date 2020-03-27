@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>zhangbo.github.io</title>
+</head>
+<body>
+<h3>synchronized和Lock的区别</h3>
+<table style="">
+    <thead>
+        <tr>
+            <th></th>
+            <th>synchronized</th>
+            <th>Lock</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>语法使用</td>
+            <td>Java提供的关键字，用于修饰方法或代码块,自动获取锁与释放锁，不会出现忘记释放锁的情况</td>
+            <td>工具类，new相应的锁对象，手动调用lock()和unlock()方法，需注意unlock()在finally块中</td>
+        </tr>
+        <tr>
+            <td>通知机制</td>
+            <td>Object.wait()和notify()/notifyAll()方法</td>
+            <td>借助Condition.await()和signal()/signalAll()</td>
+        </tr>
+        <tr>
+            <td>锁的种类</td>
+            <td>偏向锁-轻量级锁-重量级锁</td>
+            <td>读写锁-公平锁/非公平锁</td>
+        </tr>
+        <tr>
+            <td>超时机制</td>
+            <td>无</td>
+            <td>java.util.concurrent.locks.ReentrantLock.tryLock(long, java.util.concurrent.TimeUnit)</td>
+        </tr>
+        <tr>
+            <td>是否可重入</td>
+            <td>支持可重入</td>
+            <td>支持可重入</td>
+        </tr>
+        <tr>
+            <td>线程阻塞状态</td>
+            <td>BLOCKED</td>
+            <td>WAITING或TIMED_WAITING</td>
+        </tr>
+        <tr>
+            <td>底层实现</td>
+            <td>借助字节码指令moniterenter和moniterexit实现</td>
+            <td>通过CAS修改volatile变量state，再借助LockSupport.park()/unpark()</td>
+        </tr>
+        <tr>
+            <td>性能</td>
+            <td>在线程竞争不激烈的情况下，通过偏向锁和轻量级锁来优化</td>
+            <td>只有重量级锁，但可借助读写锁等适用不同的场景</td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>
