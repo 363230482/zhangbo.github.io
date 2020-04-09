@@ -1,5 +1,7 @@
 #搭建MongoDB ReplicaSet步骤
-由于我这里是单机搭建，所以用配置文件的方式来配置。
+官方文档地址：[https://docs.mongodb.com/manual/tutorial/deploy-replica-set/]
+
+由于我这里是单机搭建，所以用配置文件的方式来配置，也可以直接使用命令行的方式配置。
 我们先创建好对应的日志和data目录。
 需要注意如果是单机搭建，需要修改logpath,dbpath及端口信息等。
 `mongod1.cnf`:
