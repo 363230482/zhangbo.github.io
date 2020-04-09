@@ -33,9 +33,10 @@ replication:
 ```text
 ./bin/mongo --port 27027
 ```
-连接上之后，我们就开始副本集的初始化操作,注意外面的`_id`和配置文件里面的`replSetName`保持一致：
+连接上之后，我们就开始副本集的初始化操作,注意外面的`_id`和配置文件里面的`replSetName`保持一致,
+此处的host选项，建议使用hostname，避免IP变动带来的问题，这里由于是本机，直接用IP代替：
 ```text
-rs.initiate( {
+rs.initiate({
    _id : "rsTest",
    members: [
       { _id: 0, host: "127.0.0.1:27027" },
@@ -59,9 +60,11 @@ db.user.find() #查询数据
 use test #切换到test数据库
 db.user.find() #查询数据，默认会报错`not master and slaveOk=false`
 
-上面Secondary节点的查询和写入默认要报错，因为Secondary默认是不能读和写的，那我们可以开启Sedondary节点的读操作：
+上面Secondary节点的查询和写入默认要报错，因为Secondary默认是不能读和写的，那我们可以开启Secondary节点的读操作：
 ```text
 rs.slaveOk() #开启读
 db.user.find() #查询，此时应该可以看到查询出了数据
 ```
 由于Secondary节点是不能写入数据的，所以如果你在Secondary节点写入数据的话，应该会看到`"not master"`的报错信息。
+
+如果此时我们在手动将Primary阶段kill掉，我们会发现整个副本集还能正常提供服务，只是重新选举了一次Primary节点。
