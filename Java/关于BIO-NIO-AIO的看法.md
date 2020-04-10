@@ -1,4 +1,4 @@
-本文主要基于面试时BIO/NIO/AIO的个人看法。
+﻿本文主要基于面试时BIO/NIO/AIO的个人看法。
 ##Java语法层面
 >1.BIO主要是指InputStream/OutputStream/Reader/Writer等一些列的子类。
 BIO主要是面向流的，无缓冲，输入/输出流分开，阻塞的，一个线程处理一个链接。  

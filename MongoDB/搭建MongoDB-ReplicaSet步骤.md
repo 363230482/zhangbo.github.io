@@ -1,4 +1,4 @@
-#搭建MongoDB ReplicaSet步骤
+﻿#搭建MongoDB ReplicaSet步骤
 官方文档地址：[https://docs.mongodb.com/manual/tutorial/deploy-replica-set/]
 
 由于我这里是单机搭建，所以用配置文件的方式来配置，也可以直接使用命令行的方式配置。
