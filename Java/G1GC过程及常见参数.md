@@ -1,4 +1,4 @@
-#G1GC过程及常见参数
+﻿#G1GC过程及常见参数
 官方文档：[https://docs.oracle.com/en/java/javase/13/gctuning/garbage-first-garbage-collector.html]  
 >垃圾优先收集器简介  
 Garbage-First（G1）垃圾收集器的目标是具有大量内存的多处理器计算机。它尝试以极高的可能性满足垃圾收集暂停时间目标，同时几乎不需要配置即可实现高吞吐量。G1的目标是使用当前的目标应用程序和环境在延迟和吞吐量之间达到最佳平衡，其特点包括：  
