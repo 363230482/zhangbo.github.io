@@ -46,7 +46,7 @@
         </tr>
         <tr>
             <td>底层实现</td>
-            <td>借助字节码指令moniterenter和moniterexit实现</td>
+            <td>借助字节码指令moniterenter和moniterexit和ACC_SYNNCHRONZIED标志位实现</td>
             <td>通过CAS修改volatile变量state，再借助LockSupport.park()/unpark()</td>
         </tr>
         <tr>
