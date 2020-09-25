@@ -8,10 +8,9 @@ feign.hystrix.HystrixInvocationHandler#invoke
 com.netflix.hystrix.HystrixCommand#execute
 com.netflix.hystrix.HystrixCommand#queue
 com.netflix.hystrix.AbstractCommand#toObservable
-com.netflix.hystrix.AbstractCommand#toObservable
 // request cache:默认true,但cacheKey为null，一样不会缓存
-// 配置全局项 hystrix.default.requestCache.enabled=false
-// 配置单个接口 hystrix.UserApi#get(Long).requestCache.enabled=false
+// 配置全局项 hystrix.command.default.requestCache.enabled=false
+// 配置单个接口 hystrix.command.UserApi#get(Long).requestCache.enabled=false
 com.netflix.hystrix.AbstractCommand#isRequestCachingEnabled
 // hystrix监控
 com.netflix.hystrix.AbstractCommand#applyHystrixSemantics
@@ -28,6 +27,8 @@ com.netflix.hystrix.HystrixCommand#getExecutionObservable
 com.netflix.hystrix.HystrixCommand#run
 // HystrixCommand.run：SynchronousMethodHandler为每个api method对应一个feign.hystrix.HystrixInvocationHandler#dispatch Map<Method, MethodHandler>
 feign.SynchronousMethodHandler#invoke
+// 转换请求参数为 RequestTemplate
+feign.ReflectiveFeign.BuildTemplateByResolvingArgs#create
 feign.SynchronousMethodHandler#executeAndDecode
 org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient#execute
 com.netflix.client.AbstractLoadBalancerAwareClient#executeWithLoadBalancer(S, com.netflix.client.config.IClientConfig)
@@ -54,7 +55,7 @@ feign.Client.Default#convertResponse
 
 ```
 
-## fallback流程
+### fallback流程
 ```
 feign.hystrix.HystrixInvocationHandler#invoke
 com.netflix.hystrix.HystrixCommand#execute
@@ -72,6 +73,20 @@ com.netflix.hystrix.HystrixCommand#getFallback
 com.netflix.hystrix.AbstractCommand#executeCommandAndObserve
 com.netflix.hystrix.AbstractCommand#executeCommandWithSpecifiedIsolation
 
+```
+
+### 转换请求参数为 RequestTemplate
+```
+feign.SynchronousMethodHandler#invoke
+// 转换请求参数为 RequestTemplate
+feign.ReflectiveFeign.BuildTemplateByResolvingArgs#create
+feign.ReflectiveFeign.BuildTemplateByResolvingArgs#expandElements
+org.springframework.cloud.openfeign.support.SpringMvcContract.ConvertingExpanderFactory#getExpander
+org.springframework.core.convert.support.GenericConversionService#convert(java.lang.Object, org.springframework.core.convert.TypeDescriptor, org.springframework.core.convert.TypeDescriptor)
+// 设置参数到 RequestTemplate
+feign.ReflectiveFeign.BuildTemplateByResolvingArgs#resolve
+
+org.springframework.cloud.openfeign.support.SpringEncoder#encode
 ```
 
 ## 未启用hystrix
@@ -101,6 +116,7 @@ feign.Client.Default#execute
 
 ```
 
+## 启动时初始化流程
 ```
 // 启动流程
 org.springframework.beans.factory.support.DefaultListableBeanFactory#addCandidateEntry
