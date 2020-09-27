@@ -30,6 +30,10 @@ feign.SynchronousMethodHandler#invoke
 // 转换请求参数为 RequestTemplate
 feign.ReflectiveFeign.BuildTemplateByResolvingArgs#create
 feign.SynchronousMethodHandler#executeAndDecode
+// 自定义的RequestInterceptor执行,并转换RequestTemplate为feign.Request
+feign.SynchronousMethodHandler#targetRequest
+feign.RequestInterceptor#apply
+feign.Target.HardCodedTarget#apply
 org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient#execute
 com.netflix.client.AbstractLoadBalancerAwareClient#executeWithLoadBalancer(S, com.netflix.client.config.IClientConfig)
 com.netflix.loadbalancer.reactive.LoadBalancerCommand#submit
@@ -94,6 +98,10 @@ org.springframework.cloud.openfeign.support.SpringEncoder#encode
 feign.ReflectiveFeign.FeignInvocationHandler#invoke
 feign.SynchronousMethodHandler#invoke
 feign.SynchronousMethodHandler#executeAndDecode
+// 自定义的RequestInterceptor执行,并转换RequestTemplate为feign.Request
+feign.SynchronousMethodHandler#targetRequest
+feign.RequestInterceptor#apply
+feign.Target.HardCodedTarget#apply
 org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient#execute
 com.netflix.client.AbstractLoadBalancerAwareClient#executeWithLoadBalancer(S, com.netflix.client.config.IClientConfig)
 
