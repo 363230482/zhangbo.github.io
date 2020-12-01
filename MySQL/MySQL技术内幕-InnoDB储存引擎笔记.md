@@ -113,3 +113,24 @@ innodb_autoinc_lock_mode=012，主键自增默认，默认1，自增可以采用
 innodb_lock_wait_timeout=50，默认50秒锁超时时间
 innodb_rollback_on_timeout=off，在锁超时后，默认不回滚事务
 事务在锁超时后，既不会自动rollback，也不会自动commit，需要手动操作。
+
+innodb_purge_batch_size=300，innodb1.2之前默认20，1.2之后默认300，表示每次purge时回收的undo页。
+innodb_max_purge_lag，控制history list的长度，若长度大于该参数时，其会“延缓”DML的操作
+innodb_max_purge_lag_delay，其用来控制delay的最大毫秒数。也就是当上述计算得到的delay值大于该参数时，将delay设置为innodb_max_purge_lag_delay，避免由于purge操作缓慢导致其他SQL线程出现无限制的等待。
+
+binlog_max_flush_queue_time，用来控制事务提交时，flush阶段等待的最大时间，用于group commit(一次flush提交多个事务），提高性能，默认0。
+
+## 备份
+冷备:备份MySQL数据库的frm文件，共享表空间文件，独立表空间文件（*.ibd），重做日志文件，还有配置文件my.cnf
+逻辑备份:mysqldump，select * into file
+binlog,恢复mysqlbinlog binlog_file
+热备:ibbackup收费.在线备份，不阻塞线上sql执行。复制物理文件，效率高。
+1）记录备份开始时，InnoDB存储引擎重做日志文件检查点的LSN。
+2）复制共享表空间文件以及独立表空间文件。
+3）记录复制完表空间文件后，InnoDB存储引擎重做日志文件检查点的LSN。
+4）复制在备份时产生的重做日志。
+XtraBackup:免费。
+
+## 基准测试,编译调试
+基准测试工具：sysbench和mysql-tpcc。
+innodb编译调试

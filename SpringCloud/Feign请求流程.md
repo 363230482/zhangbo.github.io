@@ -121,7 +121,25 @@ com.netflix.loadbalancer.LoadBalancerContext#reconstructURIWithServer
 org.springframework.cloud.openfeign.ribbon.FeignLoadBalancer#execute
 // 默认是 HttpURLConnection,可以引用 feign-httpclient / feign-okhttp 依赖包,并配置 feign.okhttp.enabled=true 或 feign.httpclient.enabled=true启用对应的client
 feign.Client.Default#execute
-
+// 在executeAndDecode中将返回的response进行decode/ error decode
+if (response.status() >= 200 && response.status() < 300) {
+   if (void.class == metadata.returnType()) {
+      return null;
+   } else {
+      // decode
+      Object result = decode(response);
+      shouldClose = closeAfterDecode;
+      return result;
+   }
+} else if (decode404 && response.status() == 404 && void.class != metadata.returnType()) {
+    // deocode 404
+    Object result = decode(response);
+    shouldClose = closeAfterDecode;
+    return result;
+} else {
+    // error decode
+    throw errorDecoder.decode(metadata.configKey(), response);
+}
 ```
 
 ## 启动时初始化流程
