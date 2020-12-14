@@ -68,6 +68,9 @@
 -XX:NumberOfGCLogFiles=5	GC日志文件数量
 
 ========== 对象分配 ==========
+-XX:+NeverTenure 对象永远不会晋升到老年代.当我们确定不需要老年代时，可以这样设置。这样设置风险很大,并且会浪费至少一半的堆内存
+-XX:+AlwaysTenure 表示没有幸存区,所有对象在第一次GC时，会晋升到老年代。
+-XX:InitialTenuringThreshold=10 设定老年代阀值的初始值
 -XX:MaxTenuringThreshold=15 设置新生代对象晋升到老年代的年龄阈值，默认为15
 -XX:TargetSurvivorRatio=50 设置Survivor区的使用率，默认为50%，如果在GC后Survivor仍然超过设定的值，则可能使新生代对象提前晋升到老年代
 -XX:PretenureSizeThreshold=1000 单位字节，如果新分配对象大小超过该值，直接分配到老年代，只针对串行收集器和ParNew有效，默认为0，即不指定大小，由运行时决定
@@ -84,7 +87,7 @@
 -Xcomp 编译执行，在第一次执行时把所有的字节码编译为本地代码，会损失部分性能，因失去了多次执行时的分支预测编译
 -Xmixed 混合模式执行，默认为混合模式
 -XX:NativeMemoryTracking={summary|detail} 直接内存跟踪，会导致JVM执行性能下降5-10%
--XX:+PrintTenuringDistribution 打印对象的年龄
+-XX:+PrintTenuringDistribution 指定JVM在每次新生代GC时，输出幸存区中对象的年龄分布
 
 ========== 类加载 ==========
 -verbose:class 打印class的加载信息
