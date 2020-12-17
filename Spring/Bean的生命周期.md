@@ -57,6 +57,7 @@ org.springframework.beans.factory.support.AbstractBeanFactory#doGetBean() {
                         ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
                         if (singletonFactory != null) {
                             singletonObject = singletonFactory.getObject();
+                            // 实例化完成，放入earlySingletonObjects
                             this.earlySingletonObjects.put(beanName, singletonObject);
                             this.singletonFactories.remove(beanName);
                         }
@@ -138,6 +139,7 @@ public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException 
          throw new AopConfigException("TargetSource cannot determine target class: " +
                "Either an interface or a target is required for proxy creation.");
       }
+      // 如果是接口或者已经被jdk代理过的类，使用jdk代理
       if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
          return new JdkDynamicAopProxy(config);
       }
