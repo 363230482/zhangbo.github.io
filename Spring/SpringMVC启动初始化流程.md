@@ -37,3 +37,10 @@ org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.MappingRegi
 org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.MappingRegistry#registry.put(mapping, new MappingRegistration<>(mapping, handlerMethod, directUrls, name));
 
 ```
+
+```
+// 初始化 exception handler
+org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver#afterPropertiesSet
+org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver#initExceptionHandlerAdviceCache
+org.springframework.web.method.ControllerAdviceBean#findAnnotatedBeans
+```

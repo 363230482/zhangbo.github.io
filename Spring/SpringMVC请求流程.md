@@ -17,6 +17,9 @@ org.springframework.web.servlet.DispatcherServlet#getHandler
             org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#addMatchingMappings
             org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping#getMatchingMapping
             org.springframework.web.servlet.mvc.method.RequestMappingInfo#getMatchingCondition
+            //1.1.3 抛出HttpRequestMethodNotSupportedException/HttpMediaTypeNotSupportedException异常，否则返回null
+            org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#handleNoMatch
+
         //1.2 根据查找到的handlerMethod,add对应的interceptor到HandlerExecutionChain
     org.springframework.web.servlet.handler.AbstractHandlerMapping#getHandlerExecutionChain
 
@@ -40,6 +43,10 @@ org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter#handle
             org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor#resolveArgument
             org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor#readWithMessageConverters
             org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodArgumentResolver#readWithMessageConverters(org.springframework.http.HttpInputMessage, org.springframework.core.MethodParameter, java.lang.reflect.Type)
+            // 
+            org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice#beforeBodyRead
+            org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter#read
+            org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice#afterBodyRead
         //3.2 反射调用controller
         org.springframework.web.method.support.InvocableHandlerMethod#doInvoke
         sun.reflect.MethodAccessor.invoke
@@ -55,11 +62,19 @@ org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter#handle
 org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#getModelAndView
 //4. interceptor#postHandle
 org.springframework.web.servlet.HandlerExecutionChain#applyPostHandle
-
+//5. resolve exception or render view
 org.springframework.web.servlet.DispatcherServlet#processDispatchResult
-//5. render view
-org.springframework.web.servlet.DispatcherServlet#render
+    //5.1 resolve exception
+    ExceptionHandler也是通过ServletInvocableHandlerMethod#invokeAndHandle，然后经过message converter等返回view
+    org.springframework.web.servlet.DispatcherServlet#processHandlerException
+        org.springframework.web.servlet.handler.HandlerExceptionResolverComposite#resolveException
+        org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver#resolveException
+        org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver#doResolveHandlerMethodException
+    //5.2 render view
+    org.springframework.web.servlet.DispatcherServlet#render
 
 //6. interceptor#afterCompletion
 org.springframework.web.servlet.HandlerExecutionChain#triggerAfterCompletion
+// 最终异常处理
+org.apache.catalina.core.StandardWrapperValve#exception
 ```
