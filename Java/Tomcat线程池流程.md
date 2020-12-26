@@ -6,8 +6,8 @@ corePoolSize默认10，maxPoolSize默认200，workQueue容量默认Integer.Max_v
 
 ## 总体执行流程
 ```
-new ThreadPoolExecutor -> prestartAllCoreThreads -> execute -> 由于当前core size已全部篇restart，所以进入work queue -> 唤醒core thread执行 -> 
-直到当前活跃任务>core size时 -> new max thread -> 活跃任务等于max size时 -> 加入work queue -> 等待空闲线程执行 ->
+new ThreadPoolExecutor -> prestartAllCoreThreads -> execute -> SubmittedCount<pool size(pool size最小为core size，因为core size已全部restart)所以进入work queue -> 唤醒core thread执行 -> 
+直到当前活跃任务>core size时 -> new max thread -> SubmittedCount等于max size时 -> 加入work queue -> 等待空闲线程执行 ->
 执行拒绝策略，默认抛RejectedExecutionException -> 进入catch，queue.offer(timeout)（默认0ms）尝试重新加入队列 -> 加入失败，抛异常
 ```
 
