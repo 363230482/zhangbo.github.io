@@ -78,3 +78,51 @@ org.springframework.web.servlet.HandlerExecutionChain#triggerAfterCompletion
 // 最终异常处理
 org.apache.catalina.core.StandardWrapperValve#exception
 ```
+
+
+## 查找 HandlerMethod
+```
+protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
+    List<Match> matches = new ArrayList<>();
+    // 先直接根据url在map中查找，可能会有多个而request method不同
+    List<T> directPathMatches = this.mappingRegistry.getMappingsByUrl(lookupPath);
+    if (directPathMatches != null) {
+        // 根据request method，produce，consume，header，path pattern等判断过滤
+        addMatchingMappings(directPathMatches, matches, request);
+    }
+    if (matches.isEmpty()) {
+        // 如果上一步没有找到，则在全部requestMapping中查找
+        addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, request);
+    }
+
+    if (!matches.isEmpty()) {
+        Match bestMatch = matches.get(0);
+        if (matches.size() > 1) {
+            Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
+            matches.sort(comparator);
+            bestMatch = matches.get(0);
+            if (logger.isTraceEnabled()) {
+                logger.trace(matches.size() + " matching mappings: " + matches);
+            }
+            if (CorsUtils.isPreFlightRequest(request)) {
+                return PREFLIGHT_AMBIGUOUS_MATCH;
+            }
+            Match secondBestMatch = matches.get(1);
+            if (comparator.compare(bestMatch, secondBestMatch) == 0) {
+                Method m1 = bestMatch.handlerMethod.getMethod();
+                Method m2 = secondBestMatch.handlerMethod.getMethod();
+                String uri = request.getRequestURI();
+                throw new IllegalStateException(
+                        "Ambiguous handler methods mapped for '" + uri + "': {" + m1 + ", " + m2 + "}");
+            }
+        }
+        request.setAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE, bestMatch.handlerMethod);
+        handleMatch(bestMatch.mapping, lookupPath, request);
+        return bestMatch.handlerMethod;
+    }
+    else {
+        return handleNoMatch(this.mappingRegistry.getMappings().keySet(), lookupPath, request);
+    }
+}
+
+```
