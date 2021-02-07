@@ -33,6 +33,7 @@ innodb_flush_nerghbors=0            可禁用flush相邻的脏页，如是机械
 innodb_log_buffer_size=16777216     redo log buffer空间，默认16M。会每秒定时flush到磁盘，所以只需缓冲一秒内事务产生的redolog即可
 innodb_flush_log_at_trx_commit=0/1/2	每次事务提交时刷新redolog到磁盘。建议设置为1。为0时不刷盘，只写内存；为1时每次commit都直接flush到磁盘；为2时每次提交只write到操作系统的page cache，由后台线程每隔1秒定时flush
 如果redo log buffer的大小占到 innodb_log_buffer_size的一半时，后台线程会主动将redo log write到OS的page cache
+innodb_flush_method=fdatasync/O_DIRECT  默认fdatasync，指innodb调用write时只写入os cache，由操作系统自行flush到磁盘。O_DIRECT则直接写入磁盘，这样会导致写入操作响应时间变长，但io,cpu消耗变低。
 
 innodb_buffer_pool_instances=1      buffer pool个数，设置多个可以减少内存资源锁定的冲突，提升性能，默认1
 innodb_old_blocks_pct=37            Innodb缓冲区采用LRU算法淘汰使用很少的内存页(16k)，默认最新访问的页并不是放在LRU的头部，而是在LRU列表尾部37%的位置
@@ -44,6 +45,7 @@ innodb_deadlock_detect=ON/OFF       死锁检测
 
 innodb_sort_buffer_size             mysql会为每个线程分配一个排序缓冲区，如果要排序的数据量小于该值，则在内存中排序(性能好)，否则将借助磁盘临时文件排序
 innodb_adaptive_hash_index=ON       自适应哈希索引，默认开启
+innodb_adaptive_hash_index_parts=8  hash索引的分区，默认8，最大512，加大可适当提高性能，降低索引的锁竞争。
 query_cache_type=ON/OFF/DEMAND      开启/关闭查询缓存，一般建议关闭。查询缓存是表级别的，一个update会清空整个表的查询缓存，如果update频繁，则导致查询缓存弊大于利。可使用DEMAND配合'select SQL_CACHE * from table'显示指定。mysql8.0以后已经关闭查询缓存的功能
 
 max_connections					    默认256，服务端接收的最大连接数，超过该限制，报 Too many connections。
@@ -65,6 +67,17 @@ join_buffer_size=262144             连表缓冲区大小，默认256k
 read_rnd_buffer_length              回表查询时，先根据索引查出对应的主键id(一般索引对应的主键索引可能是无序的，造成磁盘随机读，性能低)，放在read_rnd_buffer中，然后排序id，在到主键上顺序查询
 tmp_table_size=16777216             内存临时表大小，默认16M
 secure_file_priv=/path              
+
+
+####################
+数据库遇到类似 CPU 问题，可以完成以下操作，对追溯问题根源是很有帮助的：
+vmstat 1 1000
+top -Hu mysql
+perf top -a -g
+show engine innodb status \G
+show processlist
+重启前打pstack 日志（确定重启前才能打，其他时候不能乱打
+#####################
 
 WAL: MySQL性能好的关键是Write Ahead Log(redo log),将随机写磁盘变为顺序写；  
 change buffer: 普通索引才可用，每次索引的修改直接在change buffer中修改，不用去磁盘读；  
