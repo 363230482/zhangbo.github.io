@@ -15,7 +15,11 @@ NESTED：嵌套事务，以savepoint(JDBC事务)的方式在当前事务中执�
 ## 1.invokeWithinTransaction() 部分源码如下：
 ```
 org.springframework.transaction.interceptor.TransactionAspectSupport#invokeWithinTransaction
-
+// 获取声明式事务注解的标识
+TransactionAttributeSource tas = getTransactionAttributeSource();
+// AnnotationTransactionAttributeSource#getTransactionAttribute
+final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+final TransactionManager tm = determineTransactionManager(txAttr);
 // 创建一个事务
 TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
 Object retVal = null;
@@ -223,4 +227,30 @@ org.springframework.transaction.interceptor.RuleBasedTransactionAttribute#rollba
 org.springframework.transaction.interceptor.DefaultTransactionAttribute#rollbackOn
 // 通过判断当前跑出的异常是否是指定的回滚异常的子类
 org.springframework.transaction.interceptor.RollbackRuleAttribute#getDepth(java.lang.Throwable)
+```
+
+## 4.设置事务隔离级别
+```
+org.springframework.jdbc.datasource.DataSourceTransactionManager#doBegin
+org.springframework.jdbc.datasource.DataSourceUtils#prepareConnectionForTransaction
+    // Apply specific isolation level, if any.
+    Integer previousIsolationLevel = null;
+    if (definition != null && definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT) {
+        if (debugEnabled) {
+            logger.debug("Changing isolation level of JDBC Connection [" + con + "] to " +
+                    definition.getIsolationLevel());
+        }
+        int currentIsolation = con.getTransactionIsolation();
+        if (currentIsolation != definition.getIsolationLevel()) {
+            previousIsolationLevel = currentIsolation;
+            // 设置当前链接的隔离级别
+            con.setTransactionIsolation(definition.getIsolationLevel());
+        }
+    }
+
+// 清除当前session的隔离级别，恢复到原来的隔离级别
+org.springframework.transaction.support.AbstractPlatformTransactionManager#cleanupAfterCompletion
+org.springframework.jdbc.datasource.DataSourceTransactionManager#doCleanupAfterCompletion
+org.springframework.jdbc.datasource.DataSourceUtils#resetConnectionAfterTransaction(java.sql.Connection, java.lang.Integer, boolean)
+java.sql.Connection.setTransactionIsolation
 ```
